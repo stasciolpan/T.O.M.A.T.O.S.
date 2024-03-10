@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 10
+names: ['Bacterial Spot', 'Early Blight', 'Healthy', 'Late Blight', 'Leaf Mold', 'Leaf_Miner', 'Mosaic Virus', 'Septoria', 'Spider Mites', 'Yellow Leaf Curl Virus']
+
+roboflow:
+  workspace: universitas-atma-jaya
+  project: tomato-leaf-disease-rxcft
+  version: 6
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/universitas-atma-jaya/tomato-leaf-disease-rxcft/dataset/6
