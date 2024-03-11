@@ -3,7 +3,7 @@ import os
 from ultralytics import YOLO
 
 # Path-ul către fișierul cu modelul YOLO v8qq
-model_path = os.path.join('.', 'runs', 'detect', 'train6', 'weights', 'last.pt')
+model_path = os.path.join('.', 'runs', 'detect', 'train7', 'weights', 'last.pt')
 
 # Crearea obiectului YOLO
 model = YOLO(model_path)
