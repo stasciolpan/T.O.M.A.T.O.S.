@@ -1,4 +1,4 @@
 from ultralytics import YOLO
 
-model = YOLO("yolov8n.yaml")
-results = model.train(data="config.yaml", epochs=100, device=0)
+model = YOLO("/home/heiwa/git/tomat/T.O.M.A.T.O.S./runs/detect/train7/weights/last.pt")
+results = model.train(data="config.yaml", epochs=3, device=0)
