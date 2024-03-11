@@ -19,6 +19,9 @@ while True:
     if not ret:
         break
 
+    # Downsample the frame
+    frame = cv2.resize(frame, None, fx=0.5, fy=0.5, interpolation=cv2.INTER_LINEAR);
+    
     # Define the FFmpeg command
     command = [
         'ffmpeg',
@@ -47,10 +50,10 @@ while True:
         x1, y1, x2, y2, score, class_id = result
 
         if score > 0.5:
-            cv2.rectangle(frame, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 0), 4)
+            cv2.rectangle(frame, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 0), 2)
             label = f"{results.names[int(class_id)].upper()} : {score:.2f}"
             cv2.putText(frame, label, (int(x1), int(y1 - 10)),
-                        cv2.FONT_HERSHEY_SIMPLEX, 1.3, (0, 255, 0), 3, cv2.LINE_AA)
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2, cv2.LINE_AA)
 
     # Write the frame to the FFmpeg process
     try:
