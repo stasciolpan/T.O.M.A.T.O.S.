@@ -8,12 +8,9 @@ model_path = os.path.join('.', 'runs', 'detect', 'train7', 'weights', 'last.pt')
 
 # Create the YOLO object
 model = YOLO(model_path)
-print("you only liao once")
 # Capture video from the webcam
 cap = cv2.VideoCapture(0)
-print("nigga")
 proc = None
-print("cat")
 while True:
     ret, frame = cap.read()
     if not ret:
