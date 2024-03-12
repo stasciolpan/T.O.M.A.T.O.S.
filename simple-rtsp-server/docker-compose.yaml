@@ -3,4 +3,4 @@ services:
         stdin_open: true
         tty: true
         network_mode: host
-        image: bluenviron/mediamtx:latest
+        image: bluenviron/mediamtx:latest-ffmpeg-rpi
