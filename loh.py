@@ -1,5 +1,6 @@
 import cv2
 import os
+import torch
 import subprocess as sp
 from ultralytics import YOLO
 from picamera2 import Picamera2, Preview
@@ -9,19 +10,19 @@ model_path = os.path.join('.', 'runs', 'detect', 'train7', 'weights', 'last.pt')
 
 # Create camera context
 picam2 = Picamera2()
-#picam2.configure(picam2.create_preview_configuration({"size": (640, 480)}))
-#picam2.start_preview(Preview.QTGL)
+config = picam2.create_preview_configuration({'format': 'RGB888', "size": (640,480)})
+picam2.configure(config)
 picam2.start()
 
 # Create the YOLO object
 model = YOLO(model_path)
+model.model = torch.compile(model.model)
+
 
 # Capture video from the webcam
 proc = None
-while True:
+while 1:
     frame = picam2.capture_array()
-    frame = frame[:,:,:3]
-    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     # Downsample the frame
     #frame = cv2.resize(frame, None, fx=0.3, fy=0.3, interpolation=cv2.INTER_LINEAR);
     
@@ -66,6 +67,3 @@ while True:
         print("FFmpeg process has terminated. Exiting.")
         break
 
-# Release the webcam
-#cap.release()
-#cv2.destroyAllWindows()
