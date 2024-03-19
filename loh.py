@@ -42,6 +42,7 @@ while 1:
         '-c:v', 'libx264',
         #'-b:v', '5000k',
         '-preset', 'ultrafast',
+        '-bufsize', '16M',
         '-f', 'flv',
         'rtmp://localhost:1935/tomato'
     ]
