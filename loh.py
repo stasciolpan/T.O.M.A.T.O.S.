@@ -42,7 +42,7 @@ while 1:
         '-vcodec', 'libx264',
         '-b:v', '5000k',
         '-f', 'flv',
-        'rtmp://localhost/live/tomato'
+        'rtmp://localhost:1935/tomato'
     ]
 
     # Create the FFmpeg process
