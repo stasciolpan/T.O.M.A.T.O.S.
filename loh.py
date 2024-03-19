@@ -17,7 +17,7 @@ picam2.start()
 # Create the YOLO object
 model = YOLO(model_path)
 model.export(format='onnx')
-onnx_model = YOLO('yolov8n.onnx')
+onnx_model = YOLO('best.onnx')
 # Capture video from the webcam
 proc = None
 while 1:
