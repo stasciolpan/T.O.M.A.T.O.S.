@@ -39,7 +39,7 @@ while 1:
         '-r', '5',
         '-i', '-',
         '-an',
-        '-vcodec', 'mpeg4',
+        '-vcodec', 'libx264',
         '-b:v', '5000k',
         '-f', 'flv',
         'rtmp://localhost/live/tomato'
