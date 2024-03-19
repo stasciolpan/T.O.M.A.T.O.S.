@@ -30,6 +30,7 @@ while 1:
     command = [
         'ffmpeg',
         '-y',
+        '-re'
         '-f', 'rawvideo',
         '-vcodec','rawvideo',
         '-pix_fmt', 'bgr24',
@@ -40,8 +41,8 @@ while 1:
         '-an',
         '-vcodec', 'mpeg4',
         '-b:v', '5000k',
-        '-f', 'rtmp',
-        'rtmp://localhost/tomato'
+        '-f', 'rtsp',
+        'rtsp://localhost/tomato'
     ]
 
     # Create the FFmpeg process
