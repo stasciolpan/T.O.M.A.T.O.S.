@@ -3,6 +3,16 @@ import os
 import subprocess as sp
 from ultralytics import YOLO
 from picamera2 import Picamera2, Preview
+import socket
+import math
+import pickle
+import sys
+
+max_length = 65000
+host = sys.argv[1]
+port = 5000
+
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 # Path to the YOLO model file
 model_path = os.path.join('.', 'runs', 'detect', 'train7', 'weights', 'best.pt')
@@ -20,36 +30,8 @@ model = YOLO(model_path)
 onnx_model = YOLO(onnx_model_path)
 
 # Capture video from the webcam
-proc = None
 while 1:
     frame = picam2.capture_array()
-    # Downsample the frame
-    #frame = cv2.resize(frame, None, fx=0.3, fy=0.3, interpolation=cv2.INTER_LINEAR);
-    
-    # Define the FFmpeg command
-    command = [
-        'ffmpeg',
-        '-y',
-        '-re',
-        '-f', 'rawvideo',
-        '-vcodec','rawvideo',
-        '-pix_fmt', 'bgr24',
-        '-s', '{}x{}'.format(*frame.shape[1::-1]),
-        #'-r', str(cap.get(cv2.CAP_PROP_FPS)),
-        '-r', '10',
-        '-i', '-',
-        '-an',
-        '-c:v', 'libx264',
-        #'-b:v', '5000k',
-        '-preset', 'ultrafast',
-        '-bufsize', '16M',
-        '-f', 'flv',
-        'rtmp://localhost:1935/tomato'
-    ]
-
-    # Create the FFmpeg process
-    if proc is None:
-        proc = sp.Popen(command, stdin=sp.PIPE)
 
     # Detect objects using the YOLO model
     results = onnx_model(frame)[0]
@@ -63,10 +45,37 @@ while 1:
             cv2.putText(frame, label, (int(x1), int(y1 - 10)),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2, cv2.LINE_AA)
 
-    # Write the frame to the FFmpeg process
-    try:
-        proc.stdin.write(frame.tobytes())
-    except BrokenPipeError:
-        print("FFmpeg process has terminated. Exiting.")
-        break
+    retval, buffer = cv2.imencode(".jpg", frame)
+
+    if retval:
+        # convert to byte array
+        buffer = buffer.tobytes()
+        # get size of the frame
+        buffer_size = len(buffer)
+
+        num_of_packs = 1
+        if buffer_size > max_length:
+            num_of_packs = math.ceil(buffer_size/max_length)
+
+        frame_info = {"packs":num_of_packs}
+
+        # send the number of packs to be expected
+        print("Number of packs:", num_of_packs)
+        sock.sendto(pickle.dumps(frame_info), (host, port))
+        
+        left = 0
+        right = max_length
+
+        for i in range(num_of_packs):
+            print("left:", left)
+            print("right:", right)
+
+            # truncate data to send
+            data = buffer[left:right]
+            left = right
+            right += max_length
+
+            # send the frames accordingly
+            sock.sendto(data, (host, port))
+
 
