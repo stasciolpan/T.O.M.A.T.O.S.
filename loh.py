@@ -4,11 +4,12 @@ import subprocess as sp
 from ultralytics import YOLO
 
 # Path to the YOLO model file
-model_path = os.path.join('.', 'runs', 'detect', 'train7', 'weights', 'last.pt')
+model_path = os.path.join('.', 'runs', 'detect', 'train7', 'weights', 'best.pt')
 
 # Create the YOLO object
 model = YOLO(model_path)
-
+model.export(format='onnx')
+onnx_model = YOLO('yolov8n.onnx')
 # Capture video from the webcam
 cap = cv2.VideoCapture(0)
 
@@ -44,7 +45,7 @@ while True:
         proc = sp.Popen(command, stdin=sp.PIPE)
 
     # Detect objects using the YOLO model
-    results = model(frame)[0]
+    results = onnx_model(frame)[0]
     # Iterate through the detection results and extract the bounding boxes and labels
     for result in results.boxes.data.tolist():
         x1, y1, x2, y2, score, class_id = result
