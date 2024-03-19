@@ -2,7 +2,6 @@ import cv2
 import os
 import subprocess as sp
 from ultralytics import YOLO
-import mediamux
 from picamera2 import Picamera2, Preview
 
 # Path to the YOLO model file
@@ -19,12 +18,36 @@ picam2.start()
 model = YOLO(model_path)
 #model.export(format='onnx')
 onnx_model = YOLO(onnx_model_path)
-writer = mediamux.FLVWriter('rtmp://localhost:1935/tomato')
 
 # Capture video from the webcam
+proc = None
 while 1:
     frame = picam2.capture_array()
+    # Downsample the frame
+    #frame = cv2.resize(frame, None, fx=0.3, fy=0.3, interpolation=cv2.INTER_LINEAR);
     
+    # Define the FFmpeg command
+    command = [
+        'ffmpeg',
+        '-y',
+        '-re',
+        '-f', 'rawvideo',
+        '-vcodec','rawvideo',
+        '-pix_fmt', 'bgr24',
+        '-s', '{}x{}'.format(*frame.shape[1::-1]),
+        #'-r', str(cap.get(cv2.CAP_PROP_FPS)),
+        '-r', '5',
+        '-i', '-',
+        '-an',
+        '-vcodec', 'libx264',
+        '-b:v', '5000k',
+        '-f', 'flv',
+        'rtmp://localhost:1935/tomato'
+    ]
+
+    # Create the FFmpeg process
+    if proc is None:
+        proc = sp.Popen(command, stdin=sp.PIPE)
 
     # Detect objects using the YOLO model
     results = onnx_model(frame)[0]
@@ -39,8 +62,9 @@ while 1:
                         cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2, cv2.LINE_AA)
 
     # Write the frame to the FFmpeg process
-    
-    writer.write_video_frame(frame)
-    
+    try:
+        proc.stdin.write(frame.tobytes())
+    except BrokenPipeError:
+        print("FFmpeg process has terminated. Exiting.")
+        break
 
-writer.close()
