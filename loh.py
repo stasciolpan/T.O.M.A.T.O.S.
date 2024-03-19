@@ -7,7 +7,7 @@ from picamera2 import Picamera2, Preview
 
 # Path to the YOLO model file
 model_path = os.path.join('.', 'runs', 'detect', 'train7', 'weights', 'best.pt')
-
+onnx_mode_path = os.path.join('.', 'runs', 'detect', 'train7', 'weights', 'best.onnx')
 # Create camera context
 picam2 = Picamera2()
 config = picam2.create_preview_configuration({'format': 'RGB888', "size": (640,480)})
@@ -17,7 +17,7 @@ picam2.start()
 # Create the YOLO object
 model = YOLO(model_path)
 model.export(format='onnx')
-onnx_model = YOLO('best.onnx')
+onnx_model = YOLO(onnx_model_path)
 # Capture video from the webcam
 proc = None
 while 1:
