@@ -1,27 +1,29 @@
 import cv2
 import os
+import torch
 import subprocess as sp
 from ultralytics import YOLO
+from picamera2 import Picamera2, Preview
 
 # Path to the YOLO model file
 model_path = os.path.join('.', 'runs', 'detect', 'train7', 'weights', 'best.pt')
+
+# Create camera context
+picam2 = Picamera2()
+config = picam2.create_preview_configuration({'format': 'RGB888', "size": (640,480)})
+picam2.configure(config)
+picam2.start()
 
 # Create the YOLO object
 model = YOLO(model_path)
 model.export(format='onnx')
 onnx_model = YOLO('yolov8n.onnx')
 # Capture video from the webcam
-cap = cv2.VideoCapture(0)
-
 proc = None
-
-while True:
-    ret, frame = cap.read()
-    if not ret:
-        break
-
+while 1:
+    frame = picam2.capture_array()
     # Downsample the frame
-    frame = cv2.resize(frame, None, fx=0.5, fy=0.5, interpolation=cv2.INTER_LINEAR);
+    #frame = cv2.resize(frame, None, fx=0.3, fy=0.3, interpolation=cv2.INTER_LINEAR);
     
     # Define the FFmpeg command
     command = [
@@ -31,7 +33,8 @@ while True:
         '-vcodec','rawvideo',
         '-pix_fmt', 'bgr24',
         '-s', '{}x{}'.format(*frame.shape[1::-1]),
-        '-r', str(cap.get(cv2.CAP_PROP_FPS)),
+        #'-r', str(cap.get(cv2.CAP_PROP_FPS)),
+        '-r', '15',
         '-i', '-',
         '-an',
         '-vcodec', 'mpeg4',
@@ -50,7 +53,7 @@ while True:
     for result in results.boxes.data.tolist():
         x1, y1, x2, y2, score, class_id = result
 
-        if score > 0.5:
+        if score > 0.65:
             cv2.rectangle(frame, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 0), 2)
             label = f"{results.names[int(class_id)].upper()} : {score:.2f}"
             cv2.putText(frame, label, (int(x1), int(y1 - 10)),
@@ -63,6 +66,3 @@ while True:
         print("FFmpeg process has terminated. Exiting.")
         break
 
-# Release the webcam
-cap.release()
-cv2.destroyAllWindows()
