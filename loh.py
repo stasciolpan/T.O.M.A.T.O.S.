@@ -30,7 +30,7 @@ while 1:
     command = [
         'ffmpeg',
         '-y',
-        '-re'
+        '-re',
         '-f', 'rawvideo',
         '-vcodec','rawvideo',
         '-pix_fmt', 'bgr24',
