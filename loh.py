@@ -39,8 +39,9 @@ while 1:
         '-r', '5',
         '-i', '-',
         '-an',
-        '-vcodec', 'libx264',
-        '-b:v', '5000k',
+        '-c:v', 'libx264',
+        #'-b:v', '5000k',
+        '-preset', 'ultrafast',
         '-f', 'flv',
         'rtmp://localhost:1935/tomato'
     ]
