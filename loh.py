@@ -36,7 +36,7 @@ while 1:
         '-pix_fmt', 'bgr24',
         '-s', '{}x{}'.format(*frame.shape[1::-1]),
         #'-r', str(cap.get(cv2.CAP_PROP_FPS)),
-        '-r', '5',
+        '-r', '10',
         '-i', '-',
         '-an',
         '-c:v', 'libx264',
