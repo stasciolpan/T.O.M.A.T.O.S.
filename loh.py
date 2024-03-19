@@ -9,7 +9,7 @@ model_path = os.path.join('.', 'runs', 'detect', 'train7', 'weights', 'best.pt')
 onnx_model_path = os.path.join('.', 'runs', 'detect', 'train7', 'weights', 'best.onnx')
 # Create camera context
 picam2 = Picamera2()
-config = picam2.create_preview_configuration({'format': 'RGB888', "size": (1920,1080)})
+config = picam2.create_preview_configuration({'format': 'RGB888', "size": (320,240)})
 picam2.configure(config)
 picam2.start()
 
