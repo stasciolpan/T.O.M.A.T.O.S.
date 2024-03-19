@@ -1,6 +1,5 @@
 import cv2
 import os
-import torch
 import subprocess as sp
 from ultralytics import YOLO
 from picamera2 import Picamera2, Preview
@@ -10,7 +9,7 @@ model_path = os.path.join('.', 'runs', 'detect', 'train7', 'weights', 'best.pt')
 onnx_model_path = os.path.join('.', 'runs', 'detect', 'train7', 'weights', 'best.onnx')
 # Create camera context
 picam2 = Picamera2()
-config = picam2.create_preview_configuration({'format': 'RGB888', "size": (640,480)})
+config = picam2.create_preview_configuration({'format': 'RGB888', "size": (1920,1080)})
 picam2.configure(config)
 picam2.start()
 
@@ -34,7 +33,7 @@ while 1:
         '-pix_fmt', 'bgr24',
         '-s', '{}x{}'.format(*frame.shape[1::-1]),
         #'-r', str(cap.get(cv2.CAP_PROP_FPS)),
-        '-r', '15',
+        '-r', '5',
         '-i', '-',
         '-an',
         '-vcodec', 'mpeg4',
@@ -53,7 +52,7 @@ while 1:
     for result in results.boxes.data.tolist():
         x1, y1, x2, y2, score, class_id = result
 
-        if score > 0.65:
+        if score > 0.60:
             cv2.rectangle(frame, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 0), 2)
             label = f"{results.names[int(class_id)].upper()} : {score:.2f}"
             cv2.putText(frame, label, (int(x1), int(y1 - 10)),
