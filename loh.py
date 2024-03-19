@@ -41,8 +41,8 @@ while 1:
         '-an',
         '-vcodec', 'mpeg4',
         '-b:v', '5000k',
-        '-f', 'rtsp',
-        'rtsp://localhost/tomato'
+        '-f', 'flv',
+        'rtmp://localhost/live/tomato'
     ]
 
     # Create the FFmpeg process
