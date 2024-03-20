@@ -15,19 +15,19 @@ port = 6969
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 # Path to the YOLO model file
-model_path = os.path.join('.', 'runs', 'detect', 'train7', 'weights', 'best.pt')
-onnx_model_path = os.path.join('.', 'runs', 'detect', 'train7', 'weights', 'best.onnx')
+model_path = os.path.join('.', 'runs', 'detect', 'train8', 'weights', 'best.pt')
+onnx_model_path = os.path.join('.', 'runs', 'detect', 'train8', 'weights', 'best.onnx')
 
-# Create camera context
+# Create YOLO instance
+model = YOLO(model_path)
+model.export(format='onnx') # used for converting to onnx (ONLY USE ONE TIME. COMMNENT AFTER GENERATION)
+onnx_model = YOLO(onnx_model_path)
+
 picam2 = Picamera2()
 config = picam2.create_preview_configuration({'format': 'RGB888', "size": (640,480)})
 picam2.configure(config)
 picam2.start()
 
-# Create the YOLO object
-model = YOLO(model_path)
-#model.export(format='onnx')
-onnx_model = YOLO(onnx_model_path)
 
 # Capture video from the webcam
 while 1:
