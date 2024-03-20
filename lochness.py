@@ -20,7 +20,7 @@ onnx_model_path = os.path.join('.', 'runs', 'detect', 'train8', 'weights', 'best
 
 # Create YOLO instance
 model = YOLO(model_path)
-model.export(format='onnx') # used for converting to onnx (ONLY USE ONE TIME. COMMNENT AFTER GENERATION)
+#model.export(format='onnx') # used for converting to onnx (ONLY USE ONE TIME. COMMNENT AFTER GENERATION)
 onnx_model = YOLO(onnx_model_path)
 
 picam2 = Picamera2()
@@ -39,7 +39,7 @@ while 1:
     for result in results.boxes.data.tolist():
         x1, y1, x2, y2, score, class_id = result
 
-        if score > 0.10:
+        if score > 0.50:
             cv2.rectangle(frame, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 0), 2)
             label = f"{results.names[int(class_id)].upper()} : {score:.2f}"
             cv2.putText(frame, label, (int(x1), int(y1 - 10)),
