@@ -10,7 +10,7 @@ import sys
 
 max_length = 65000
 host = sys.argv[1]
-port = 5000
+port = 6969
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
@@ -39,7 +39,7 @@ while 1:
     for result in results.boxes.data.tolist():
         x1, y1, x2, y2, score, class_id = result
 
-        if score > 0.60:
+        if score > 0.10:
             cv2.rectangle(frame, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 0), 2)
             label = f"{results.names[int(class_id)].upper()} : {score:.2f}"
             cv2.putText(frame, label, (int(x1), int(y1 - 10)),
@@ -76,6 +76,7 @@ while 1:
             right += max_length
 
             # send the frames accordingly
+            print(host)
             sock.sendto(data, (host, port))
 
 
