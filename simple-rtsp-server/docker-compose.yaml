@@ -1,7 +1,0 @@
-services:
-    mediamtx:
-        stdin_open: true
-        tty: true
-        network_mode: host
-        image: bluenviron/mediamtx:latest-ffmpeg-rpi
-        restart: unless-stopped
