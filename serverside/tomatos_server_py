@@ -49,8 +49,8 @@ while True:
                 print("DEBUG: Recieved frame from UDP client")
                 flipped_image = cv2.flip(frame, 1)
                 resized_up = cv2.resize(flipped_image, up_points, interpolation= cv2.INTER_LINEAR)
-                cv2.imshow("Stream", resized_up)
+                cv2.imshow("T.O.M.A.T.O.S. [ONLINE]", resized_up)
                 if cv2.waitKey(1) == 27:
                     break
                 
-print("goodbye")
+print("Exit requested. Bye bye! :)")
