@@ -1,0 +1,7 @@
+
+path: /home/heiwa/git/tomat/T.O.M.A.T.O.S.
+train: tomatoless/images
+val: train/images
+
+nc: 10
+names: ['Bacterial Spot', 'Early Blight', 'Healthy', 'Late Blight', 'Leaf Mold', 'Leaf_Miner', 'Mosaic Virus', 'Septoria', 'Spider Mites', 'Yellow Leaf Curl Virus']
