@@ -10,24 +10,24 @@ import sys
 
 max_length = 65000
 host = sys.argv[1]
-port = 5000
+port = 6969
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 # Path to the YOLO model file
-model_path = os.path.join('.', 'runs', 'detect', 'train7', 'weights', 'best.pt')
-onnx_model_path = os.path.join('.', 'runs', 'detect', 'train7', 'weights', 'best.onnx')
+model_path = os.path.join('.', 'runs', 'detect', 'train8', 'weights', 'best.pt')
+onnx_model_path = os.path.join('.', 'runs', 'detect', 'train8', 'weights', 'best.onnx')
 
-# Create camera context
+# Create YOLO instance
+model = YOLO(model_path)
+model.export(format='onnx') # used for converting to onnx (ONLY USE ONE TIME. COMMNENT AFTER GENERATION)
+onnx_model = YOLO(onnx_model_path)
+
 picam2 = Picamera2()
 config = picam2.create_preview_configuration({'format': 'RGB888', "size": (640,480)})
 picam2.configure(config)
 picam2.start()
 
-# Create the YOLO object
-model = YOLO(model_path)
-#model.export(format='onnx')
-onnx_model = YOLO(onnx_model_path)
 
 # Capture video from the webcam
 while 1:
@@ -39,7 +39,7 @@ while 1:
     for result in results.boxes.data.tolist():
         x1, y1, x2, y2, score, class_id = result
 
-        if score > 0.60:
+        if score > 0.10:
             cv2.rectangle(frame, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 0), 2)
             label = f"{results.names[int(class_id)].upper()} : {score:.2f}"
             cv2.putText(frame, label, (int(x1), int(y1 - 10)),
@@ -76,6 +76,7 @@ while 1:
             right += max_length
 
             # send the frames accordingly
+            print(host)
             sock.sendto(data, (host, port))
 
 
