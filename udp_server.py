@@ -13,6 +13,9 @@ sock.settimeout(30)
 frame_info = None
 buffer = None
 frame = None
+up_width = 1280
+up_height = 1024
+up_points = (up_width, up_height)
 
 print("-> waiting for connection")
 
@@ -43,8 +46,10 @@ while True:
             frame = cv2.flip(frame, 1)
             
             if frame is not None and type(frame) == np.ndarray:
-                print("Connection exists and frame recieved")
-                cv2.imshow("Stream", frame)
+                print("DEBUG: Recieved frame from UDP client")
+                flipped_image = cv2.flip(frame, 1)
+                resized_up = cv2.resize(flipped_image, up_points, interpolation= cv2.INTER_LINEAR)
+                cv2.imshow("Stream", resized_up)
                 if cv2.waitKey(1) == 27:
                     break
                 
