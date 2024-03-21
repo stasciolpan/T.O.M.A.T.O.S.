@@ -9,7 +9,7 @@ max_length = 65000
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind((host, port))
-sock.settimeout(30)
+sock.settimeout(10)
 frame_info = None
 buffer = None
 frame = None
@@ -17,11 +17,17 @@ up_width = 1280
 up_height = 1024
 up_points = (up_width, up_height)
 
-print("-> waiting for connection")
+print("-> waiting for T.O.M.A.T.O.S. to connect")
+
+# Check for current online connection
+online = False
 
 while True:
     try:
         data, address = sock.recvfrom(max_length)
+        if (online == False):
+            print("Connection established. T.O.M.A.T.O.S. is streaming data")
+            online = True
     except socket.timeout:
         print("ERROR: Socket timeout achieved")
         break
@@ -46,11 +52,12 @@ while True:
             frame = cv2.flip(frame, 1)
             
             if frame is not None and type(frame) == np.ndarray:
-                print("DEBUG: Recieved frame from UDP client")
+               # print("DEBUG: Recieved frame from UDP client ")
                 flipped_image = cv2.flip(frame, 1)
                 resized_up = cv2.resize(flipped_image, up_points, interpolation= cv2.INTER_LINEAR)
                 cv2.imshow("T.O.M.A.T.O.S. [ONLINE]", resized_up)
-                if cv2.waitKey(1) == 27:
+                if cv2.waitKey(1) & 0xFF == ord('q'):
                     break
                 
 print("Exit requested. Bye bye! :)")
+cv2.destroyAllWindows()
